@@ -54,44 +54,34 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
     fetchJobs();
   }, []);
 
-  const fetchJobs = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/job");
-      // fetch(`${process.env.NEXT_PUBLIC_API_URL}/job`, ...)
+  // const fetchJobs = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:5000/job");
+  //     // fetch(`${process.env.NEXT_PUBLIC_API_URL}/job`, ...)
 
-      setJobs(response.data);
-    } catch (error) {
-      console.error("Failed to fetch jobs", error);
-    }
-  };
+  //     setJobs(response.data);
+  //   } catch (error) {
+  //     console.error("Failed to fetch jobs", error);
+  //   }
+  // };
 
   // const getCompanyLogo = (companyName) => {
   //   const fileName = companyName.toLowerCase().replace(/\s+/g, '-');
   //   return `/logo/${fileName}.png`;
   // };
   
-  // const fetchJobs = async () => {
-  //   try {
-  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/job`);
-  //     setJobs(response.data);
-  //   } catch (error) {
-  //     console.error("Failed to fetch jobs", error);
-  //   }
-  // };
-  
-  const onSubmit = async (data: Job) => {
+  const fetchJobs = async () => {
     try {
-      await axios.post("http://localhost:5000/job", data);
-      fetchJobs();
-      reset();
-      setOpened(false);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/job`);
+      setJobs(response.data);
     } catch (error) {
-      console.error("Error submitting job:", error);
+      console.error("Failed to fetch jobs", error);
     }
   };
+  
   // const onSubmit = async (data: Job) => {
   //   try {
-  //     await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/job`, data);
+  //     await axios.post("http://localhost:5000/job", data);
   //     fetchJobs();
   //     reset();
   //     setOpened(false);
@@ -99,26 +89,36 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
   //     console.error("Error submitting job:", error);
   //   }
   // };
-  
-  
-  const handleDelete = async (job: Job) => {
+  const onSubmit = async (data: Job) => {
     try {
-      // Pass job.id instead of job.title
-      await axios.delete(`http://localhost:5000/job/${job.id}`);
-      fetchJobs(); // Refresh jobs after deletion
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/job`, data);
+      fetchJobs();
+      reset();
+      setOpened(false);
     } catch (error) {
-      console.error("Failed to delete job:", error);
+      console.error("Error submitting job:", error);
     }
   };
-
+  
+  
   // const handleDelete = async (job: Job) => {
   //   try {
-  //     await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/job/${job.id}`);
-  //     fetchJobs();
+  //     // Pass job.id instead of job.title
+  //     await axios.delete(`http://localhost:5000/job/${job.id}`);
+  //     fetchJobs(); // Refresh jobs after deletion
   //   } catch (error) {
   //     console.error("Failed to delete job:", error);
   //   }
   // };
+
+  const handleDelete = async (job: Job) => {
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/job/${job.id}`);
+      fetchJobs();
+    } catch (error) {
+      console.error("Failed to delete job:", error);
+    }
+  };
 
   const getShortDescription = (desc: string, wordLimit = 60) => {
     const words = desc.split(" ");
