@@ -19,9 +19,12 @@ import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./globals.css";
+import { MapPin, Briefcase, Wallet } from "lucide-react";
+
 import { IconX } from "@tabler/icons-react";
 
 type Job = {
+  id: number;
   title: string;
   company: string;
   location: string;
@@ -30,6 +33,10 @@ type Job = {
   maxSalary: number;
   applicationDeadline: Date | null;
   description: string;
+  postedDate: Date;
+  companyName:string;
+
+
 };
 
 export default function JobDashboard() {
@@ -38,7 +45,8 @@ export default function JobDashboard() {
   const [filterTitle, setFilterTitle] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
   const [filterJobType, setFilterJobType] = useState("");
-  const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 50]);
+  // const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 50]);
+const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
 
   const { register, handleSubmit, reset, control } = useForm<Job>();
 
@@ -49,12 +57,28 @@ export default function JobDashboard() {
   const fetchJobs = async () => {
     try {
       const response = await axios.get("http://localhost:5000/job");
+      // fetch(`${process.env.NEXT_PUBLIC_API_URL}/job`, ...)
+
       setJobs(response.data);
     } catch (error) {
       console.error("Failed to fetch jobs", error);
     }
   };
 
+  // const getCompanyLogo = (companyName) => {
+  //   const fileName = companyName.toLowerCase().replace(/\s+/g, '-');
+  //   return `/logo/${fileName}.png`;
+  // };
+  
+  // const fetchJobs = async () => {
+  //   try {
+  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/job`);
+  //     setJobs(response.data);
+  //   } catch (error) {
+  //     console.error("Failed to fetch jobs", error);
+  //   }
+  // };
+  
   const onSubmit = async (data: Job) => {
     try {
       await axios.post("http://localhost:5000/job", data);
@@ -65,7 +89,17 @@ export default function JobDashboard() {
       console.error("Error submitting job:", error);
     }
   };
-
+  // const onSubmit = async (data: Job) => {
+  //   try {
+  //     await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/job`, data);
+  //     fetchJobs();
+  //     reset();
+  //     setOpened(false);
+  //   } catch (error) {
+  //     console.error("Error submitting job:", error);
+  //   }
+  // };
+  
   
   const handleDelete = async (job: Job) => {
     try {
@@ -77,85 +111,145 @@ export default function JobDashboard() {
     }
   };
 
+  // const handleDelete = async (job: Job) => {
+  //   try {
+  //     await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/job/${job.id}`);
+  //     fetchJobs();
+  //   } catch (error) {
+  //     console.error("Failed to delete job:", error);
+  //   }
+  // };
+
+  const getShortDescription = (desc: string, wordLimit = 60) => {
+    const words = desc.split(" ");
+    return words.slice(0, wordLimit).join(" ") + (words.length > wordLimit ? "..." : "");
+  };
+  
+  // const filteredJobs = jobs.filter((job) => {
+  //   // Convert LPA to ₹K per month
+  //   const jobMinK = (job.minSalary * 100) / 12;
+  //   const jobMaxK = (job.maxSalary * 100) / 12;
+
+  //   const withinSalary =
+  //     jobMinK >= salaryRange[0] && jobMaxK <= salaryRange[1];
+
+  //   return (
+  //     job.title.toLowerCase().includes(filterTitle.toLowerCase()) &&
+  //     job.location.toLowerCase().includes(filterLocation.toLowerCase()) &&
+  //     job.jobType.toLowerCase().includes(filterJobType.toLowerCase()) &&
+  //     withinSalary
+  //   );
+  // });
   const filteredJobs = jobs.filter((job) => {
-    const withinSalary =
-      job.minSalary >= salaryRange[0] && job.maxSalary <= salaryRange[1];
-    return (
-      job.title.toLowerCase().includes(filterTitle.toLowerCase()) &&
-      job.location.toLowerCase().includes(filterLocation.toLowerCase()) &&
-      job.jobType.toLowerCase().includes(filterJobType.toLowerCase()) &&
-      withinSalary
-    );
-  });
+  const jobMinK = (job.minSalary * 100) / 12;
+  const jobMaxK = (job.maxSalary * 100) / 12;
+
+  const withinSalary =
+    jobMaxK >= salaryRange[0] && jobMinK <= salaryRange[1];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-<nav className="navbar">
-  <div className="navbar-title">JobBoard</div>
-  <div className="navbar-links">
-    <a href="#">Home</a>
-    <a href="#">Find Jobs</a>
-    <a href="#">Find Talents</a>
-    <a href="#">About Us</a>
-    <a href="#">Testimonials</a>
+    job.title.toLowerCase().includes(filterTitle.toLowerCase()) &&
+    job.location.toLowerCase().includes(filterLocation.toLowerCase()) &&
+    job.jobType.toLowerCase().includes(filterJobType.toLowerCase()) &&
+    withinSalary
+  );
+});
+
+  
+  // const filteredJobs = jobs.filter((job) => {
+  //   const withinSalary =
+  //     job.minSalary >= salaryRange[0] && job.maxSalary <= salaryRange[1];
+  //   return (
+  //     job.title.toLowerCase().includes(filterTitle.toLowerCase()) &&
+  //     job.location.toLowerCase().includes(filterLocation.toLowerCase()) &&
+  //     job.jobType.toLowerCase().includes(filterJobType.toLowerCase()) &&
+  //     withinSalary
+  //   );
+  // });
+
+  return (
+    <div className="min-h-screen bg-white-50">
+<nav className="custom-navbar">
+  <div className="custom-navbar-container">
+    <img src="../cybermindlogo.png" alt="Logo" className="navbar-logo" />
+    <div className="navbar-links">
+      <a href="#">Home</a>
+      <a href="#">Find Jobs</a>
+      <a href="#">Find Talents</a>
+      <a href="#">About us</a>
+      <a href="#">Testimonials</a>
+    </div>
+    <button className="navbar-button" onClick={() => setOpened(true)}>
+      Create Jobs
+    </button>
   </div>
-  <button className="navbar-button" onClick={() => setOpened(true)}>
-    Create Job
-  </button>
 </nav>
+
 
 
       <Container size="xl" className="py-8">
         {/* Filter bar */}
-        <div className="flex flex-wrap items-end gap-4 mb-6">
-          <TextInput
-            label="Search by Job Title"
-            placeholder="e.g. Full Stack Developer"
-            value={filterTitle}
-            onChange={(e) => setFilterTitle(e.currentTarget.value)}
-            className="flex-1 min-w-[200px]"
+        <div className="w-full bg-white p-6 rounded-lg shadow-sm mb-[20px]">
+  <div className="flex flex-wrap items-end gap-4">
+    <TextInput
+      label="Job Title"
+      placeholder="e.g. Full Stack Developer"
+      value={filterTitle}
+      onChange={(e) => setFilterTitle(e.currentTarget.value)}
+      className="flex-1 min-w-[150px]"
+    />
+    <Select
+      label="Location"
+      placeholder="Select"
+      data={["Chennai", "Bangalore", "Hyderabad"]}
+      value={filterLocation}
+      onChange={(value) => setFilterLocation(value || "")}
+      className="flex-1 min-w-[150px]"
+    />
+    <Select
+      label="Job Type"
+      placeholder="Select"
+      data={["Full-time", "Part-time", "Contract", "Internship"]}
+      value={filterJobType}
+      onChange={(value) => setFilterJobType(value || "")}
+      className="flex-1 min-w-[150px]"
+    />
+      <div className="flex-1 min-w-[150px]">
+          <label className="block text-sm font-medium mb-1">
+            Salary Per Month
+          </label>
+          <RangeSlider
+            value={salaryRange}
+            onChange={(value) =>
+              setSalaryRange([...value] as [number, number])
+            }
+            min={0}
+            max={80}
+            step={1}
+            label={(value) => `₹${value}K`}
+            color="dark"
+            size="xs"
+            marks={[
+              { value: 0, label: "₹0K" },
+              { value: 80, label: "₹80K" },
+            ]}
           />
-          <TextInput
-            label="Preferred Location"
-            placeholder="e.g. Chennai"
-            value={filterLocation}
-            onChange={(e) => setFilterLocation(e.currentTarget.value)}
-            className="flex-1 min-w-[200px]"
-          />
-          <Select
-            label="Job type"
-            placeholder="Select"
-            data={["Full-time", "Part-time", "Contract", "Internship"]}
-            value={filterJobType}
-            onChange={(value) => setFilterJobType(value || "")}
-            className="flex-1 min-w-[200px]"
-          />
-          <div className="min-w-[250px]">
-            <label className="block text-sm font-medium mb-1">
-              Salary Per Month
-            </label>
-            <RangeSlider
-              value={salaryRange}
-              onChange={(value) => setSalaryRange(value as [number, number])}
-              min={0}
-              max={50}
-              step={1}
-              marks={[
-                { value: 0, label: "₹0L" },
-                { value: 50, label: "₹50L" },
-              ]}
-            />
-          </div>
         </div>
+  </div>
+</div>
+
 
         {/* Jobs Grid */}
         <Grid gutter="lg">
   {filteredJobs.map((job, index) => (
-    <Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 3 }} key={index}>
+    <Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 3 }} key={index}
+    style={{ height: "280px" }} >
+
       <Card
         shadow="sm"
         padding="lg"
         radius="md"
+      
         withBorder
         className="h-full flex flex-col justify-between relative"
       >
@@ -170,38 +264,68 @@ export default function JobDashboard() {
         {/* Job card content */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <Avatar radius="xl" size="md" src="/company-icon.png" />
-            <Badge color="blue" size="xs" variant="light">
-              24h Ago
-            </Badge>
+            {/* <Avatar radius="xl" size="md" src="/company-icon.png" /> */}
+            <Avatar radius="xl" size="md">
+  <img
+    src={
+      job.company
+        ? `/logo/${job.company.toLowerCase().replace(/\s+/g, '-')}.png`
+        : '/logo/default.png'
+    }
+    alt={`${job.company || 'Default'} logo`}
+    onError={(e) => {
+      const target = e.target as HTMLImageElement;
+      target.onerror = null;
+      target.src = "/logo/default.png"; // fallback logo
+    }}
+    className="w-full h-full object-cover"
+  />
+</Avatar>
+
+
+
+
+            <Badge  color="blue" size="md" variant="light" radius="sm" style={{ color: 'black' }}>
+  {(() => {
+    const postedDate = new Date(job.postedDate);
+    const now = new Date();
+    const diffInMs = now.getTime() - postedDate.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) return "Today";
+    if (diffInDays === 1) return "1 day ago";
+    return `${diffInDays} days ago`;
+  })()}
+</Badge>
+
           </div>
           <div className="font-semibold text-lg mb-1 truncate">{job.title}</div>
           <div className="text-gray-600 text-sm mb-1 truncate">{job.company}</div>
-          <ul className="text-xs text-gray-700 mb-2 space-y-1">
-            <li>
-              <strong>Location:</strong> {job.location}
-            </li>
-            <li>
-              <strong>Type:</strong> {job.jobType}
-            </li>
-            <li>
-              <strong>Salary:</strong> ₹{job.minSalary} - ₹{job.maxSalary} LPA
-            </li>
-            <li>
-              <strong>Deadline:</strong>{" "}
-              {job.applicationDeadline
-                ? new Date(job.applicationDeadline).toLocaleDateString()
-                : "N/A"}
-            </li>
-          </ul>
-          <p className="text-[11px] text-gray-500 truncate">
+          <ul className="flex flex-wrap text-xs text-gray-700 mb-2 gap-x-4 gap-y-4 items-center">
+  <li className="flex items-center gap-1">
+    <MapPin size={14} className="text-gray-500" />
+    {job.location}
+  </li>
+  <li className="flex items-center gap-1">
+    <Briefcase size={14} className="text-gray-500" />
+    {job.jobType}
+  </li>
+  <li className="flex items-center gap-1">
+    <Wallet size={14} className="text-gray-500" />
+    ₹{job.maxSalary} LPA
+  </li>
+</ul>
+          {/* <p className="text-[11px] text-gray-500 truncate">
             {job.description
               .split(" ")
-              .slice(0, 20)
+              .slice(0, 60)
               .join(" ") + (job.description.split(" ").length > 20 ? "..." : "")}
-          </p>
+          </p> */}
+          <p className="text-[11px] text-gray-500 line-clamp-2">
+  {getShortDescription(job.description)}
+</p>
         </div>
-        <Button fullWidth size="sm" mt="md" radius="md">
+        <Button className="apply" fullWidth size="sm" mt="md" radius="md">
           Apply Now
         </Button>
       </Card>
@@ -212,114 +336,131 @@ export default function JobDashboard() {
 
       {/* Create Job Modal */}
       <Modal
-  opened={opened}
-  onClose={() => setOpened(false)}
-  title="Create Job Opening"
-  size="lg"
->
-  <form onSubmit={handleSubmit(onSubmit)}>
-    <div className="grid grid-cols-2 gap-4">
-      <TextInput
-        label="Job Title"
-        withAsterisk
-        placeholder="e.g. Full Stack Developer"
-        {...register("title", { required: true })}
-      />
-      <TextInput
-        label="Company Name"
-        withAsterisk
-        placeholder="e.g. ABC Corp"
-        {...register("company", { required: true })}
-      />
-      <Controller
-        name="location"
-        control={control}
-        rules={{ required: true }}
-        render={({ field }) => (
-          <Select
-            label="Location"
-            data={["Bangalore", "Hyderabad", "Chennai", "Delhi", "Mumbai"]}
+      opened={opened}
+      onClose={() => setOpened(false)}
+      title="Create Job Opening"
+      size="lg"
+      radius="md"
+    >
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Row 1 */}
+          <TextInput
+            label="Job Title"
             withAsterisk
-            placeholder="Select a location"
-            {...field}
+            placeholder="e.g. Full Stack Developer"
+            {...register("title", { required: true })}
           />
-        )}
-      />
-      <Controller
-        name="jobType"
-        control={control}
-        rules={{ required: true }}
-        render={({ field }) => (
-          <Select
-            label="Job Type"
-            data={["Full-time", "Part-time", "Contract", "Internship"]}
+          <TextInput
+            label="Company Name"
             withAsterisk
-            placeholder="Select job type"
-            {...field}
+            placeholder="e.g. Amazon, Microsoft, Swiggy"
+            {...register("company", { required: true })}
           />
-        )}
-      />
-      <Controller
-        name="minSalary"
-        control={control}
-        rules={{ required: true }}
-        render={({ field }) => (
-          <NumberInput
-            label="Min Salary (LPA)"
-            withAsterisk
-            placeholder="e.g. 5"
-            {...field}
-            min={0}
+
+          {/* Row 2 */}
+          <Controller
+            name="location"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select
+                label="Location"
+                data={["Bangalore", "Hyderabad", "Chennai", "Delhi", "Mumbai"]}
+                withAsterisk
+                placeholder="Choose Preferred Location"
+                {...field}
+              />
+            )}
           />
-        )}
-      />
-      <Controller
-        name="maxSalary"
-        control={control}
-        rules={{ required: true }}
-        render={({ field }) => (
-          <NumberInput
-            label="Max Salary (LPA)"
-            withAsterisk
-            placeholder="e.g. 20"
-            {...field}
-            min={0}
+
+          <Controller
+            name="jobType"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select
+                label="Job Type"
+                data={["FullTime", "PartTime", "Internship", "Contract"]}
+                withAsterisk
+                placeholder="FullTime"
+                {...field}
+              />
+            )}
           />
-        )}
-      />
- <Controller
-  name="applicationDeadline"
-  control={control}
-  rules={{ required: true }}
-  render={({ field }) => (
-    <DateInput
-      label="Application Deadline"
-      placeholder="Pick a date"
-      withAsterisk
-      value={field.value}
-      onChange={field.onChange}
-      classNames={{
-        input: 'custom-date-input', // Custom class for the input
-      }}
-    />
-  )}
-/>
-    </div>
-    <Textarea
-      label="Job Description"
-      withAsterisk
-      mt="sm"
-      placeholder="Write job description here"
-      {...register("description", { required: true })}
-    />
-    <Group justify="space-between" mt="md">
-      <Button variant="outline">Save Draft</Button>
-      <Button type="submit" color="violet">
-        Publish →
-      </Button>
-    </Group>
-  </form>
-</Modal>
+
+          {/* Row 3 - Salary Range + Deadline */}
+          <div className="col-span-2 flex gap-1">
+            <Controller
+              name="minSalary"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <NumberInput
+                  label="Salary Range"
+                  placeholder="₹ 10"
+                  min={0}
+                  {...field}
+                  className="salary-range"
+                  withAsterisk
+                />
+              )}
+            />
+
+            <Controller
+              name="maxSalary"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <NumberInput
+                  label=""
+                  placeholder="₹ 12,00,000"
+                  min={0}
+                  {...field}
+                  className="salary-range-max"
+                  withAsterisk
+                />
+              )}
+            />
+
+            <Controller
+              name="applicationDeadline"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <DateInput
+                  label="Application Deadline"
+                  placeholder="Pick a date"
+                  withAsterisk
+                  value={field.value}
+                  onChange={field.onChange}
+                  className="application-deadline"
+                />
+              )}
+            />
+          </div>
+
+          {/* Job Description */}
+          <div className="col-span-2">
+            <Textarea
+              label="Job Description"
+              placeholder="Please share a description to let the candidate know more about the job role"
+              withAsterisk
+              minRows={5}
+              {...register("description", { required: true })}
+            />
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-between items-center mt-6">
+          <Button variant="outline">Save Draft</Button>
+          <Button type="submit" color="blue" rightSection="→">
+            Publish
+          </Button>
+        </div>
+      </form>
+    </Modal>
 
     </div>
   );
