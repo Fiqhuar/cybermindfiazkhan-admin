@@ -9,7 +9,6 @@ import {
   Select,
   TextInput,
   Textarea,
-  // Group,
   RangeSlider,
   Avatar,
   Badge,
@@ -168,7 +167,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
   // });
 
   return (
-    <div className="min-h-screen bg-white-50">
+    <div className="min-h-screen bg-blue-50">
 <nav className="custom-navbar">
   <div className="custom-navbar-container">
     <img src="../cybermindlogo.png" alt="Logo" className="navbar-logo" />
@@ -184,6 +183,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
     </button>
   </div>
 </nav>
+
 
 
 
@@ -215,10 +215,10 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
       className="flex-1 min-w-[150px]"
     />
       <div className="flex-1 min-w-[150px]">
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-3">
             Salary Per Month
           </label>
-          <RangeSlider
+          <RangeSlider  className="mb-4"
             value={salaryRange}
             onChange={(value) =>
               setSalaryRange([...value] as [number, number])
@@ -265,7 +265,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
         <div>
           <div className="flex justify-between items-center mb-2">
             {/* <Avatar radius="xl" size="md" src="/company-icon.png" /> */}
-{/*             <Avatar radius="xl" size="md">
+            <Avatar radius="xl" size="md">
   <img
     src={
       job.company
@@ -281,8 +281,8 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
     className="w-full h-full object-cover"
   />
 </Avatar>
- */}
-              <Avatar radius="xl" size="md">
+
+ {/* <Avatar radius="xl" size="md">
   <img
     src={
       job.company
@@ -297,8 +297,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
     }}
     className="w-full h-full object-cover"
   />
-</Avatar>
-
+</Avatar> */}
 
 
 
@@ -440,21 +439,51 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
               )}
             />
 
-            <Controller
+{/* <Controller
               name="applicationDeadline"
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <DateInput
-                  label="Application Deadline"
-                  placeholder="Pick a date"
-                  withAsterisk
-                  value={field.value}
-                  onChange={field.onChange}
-                  className="application-deadline"
-                />
+                label="Application Deadline"
+                placeholder="Pick a date"
+                withAsterisk
+                value={field.value}
+                onChange={field.onChange}
+                className="application-deadline w-10 h-10"
+              />
+              
               )}
-            />
+            /> */}
+<Controller
+  name="applicationDeadline"
+  control={control}
+  rules={{ required: true }}
+  render={({ field }) => {
+    const valueAsString =
+      field.value instanceof Date
+        ? field.value.toISOString().split("T")[0]
+        : field.value || "";
+
+    return (
+      <div className="application-deadline">
+        <label
+          htmlFor="applicationDeadline"
+          className="mb-1 text-sm font-medium text-gray-700"
+        >
+          Application Deadline <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="date"
+          id="applicationDeadline"
+          className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+          value={valueAsString}
+          onChange={(e) => field.onChange(new Date(e.target.value))}
+        />
+      </div>
+    );
+  }}
+/>
           </div>
 
           {/* Job Description */}
@@ -480,5 +509,6 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
     </Modal>
 
     </div>
+
   );
 }
