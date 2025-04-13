@@ -47,7 +47,7 @@ export default function JobDashboard() {
   // const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 50]);
 const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
 
-  const { register, handleSubmit, reset, control } = useForm<Job>();
+  const { register, handleSubmit, reset, control , formState: { errors }} = useForm<Job>();
 
   useEffect(() => {
     fetchJobs();
@@ -361,16 +361,16 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
       size="lg"
       radius="md"
     > */}
-        <Modal
+      <Modal
   opened={opened}
   onClose={() => setOpened(false)}
   size="lg"
   radius="md"
-  withCloseButton={false} // remove default close button
-  title={null} // set title to null so we can handle it manually
+  withCloseButton={false}
+  title={null}
 >
-   {/* Custom title */}
-   <div className="relative mb-4">
+  {/* Custom title */}
+  <div className="relative mb-4">
     <h2 className="text-center text-xl font-semibold">Create Job Opening</h2>
     <button
       onClick={() => setOpened(false)}
@@ -379,155 +379,159 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
       ✕
     </button>
   </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Row 1 */}
-          <TextInput
-            label="Job Title"
+
+  <form onSubmit={handleSubmit(onSubmit)}>
+    <div className="grid grid-cols-2 gap-4">
+      {/* Row 1 */}
+      <TextInput
+        label="Job Title"
+        withAsterisk
+        placeholder="e.g. Full Stack Developer"
+        error={errors.title && "Job title is required"}
+        {...register("title", { required: true })}
+      />
+
+      <TextInput
+        label="Company Name"
+        withAsterisk
+        placeholder="e.g. Amazon, Microsoft, Swiggy"
+        error={errors.company && "Company name is required"}
+        {...register("company", { required: true })}
+      />
+
+      {/* Row 2 */}
+      <Controller
+        name="location"
+        control={control}
+        rules={{ required: true }}
+        render={({ field }) => (
+          <Select
+            label="Location"
+            data={["Bangalore", "Hyderabad", "Chennai", "Delhi", "Mumbai"]}
             withAsterisk
-            placeholder="e.g. Full Stack Developer"
-            {...register("title", { required: true })}
+            placeholder="Choose Preferred Location"
+            error={errors.location && "Location is required"}
+            {...field}
           />
-          <TextInput
-            label="Company Name"
+        )}
+      />
+
+      <Controller
+        name="jobType"
+        control={control}
+        rules={{ required: true }}
+        render={({ field }) => (
+          <Select
+            label="Job Type"
+            data={["Full-Time", "Part-Time", "Internship", "Contract"]}
             withAsterisk
-            placeholder="e.g. Amazon, Microsoft, Swiggy"
-            {...register("company", { required: true })}
+            placeholder="Full-Time"
+            error={errors.jobType && "Job type is required"}
+            {...field}
           />
+        )}
+      />
 
-          {/* Row 2 */}
-          <Controller
-            name="location"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Select
-                label="Location"
-                data={["Bangalore", "Hyderabad", "Chennai", "Delhi", "Mumbai"]}
-                withAsterisk
-                placeholder="Choose Preferred Location"
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="jobType"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Select
-                label="Job Type"
-                data={["Full-Time", "Part-Time", "Internship", "Contract"]}
-                withAsterisk
-                placeholder="Full-Time"
-                {...field}
-              />
-            )}
-          />
-
-          {/* Row 3 - Salary Range + Deadline */}
-          <div className="col-span-2 flex gap-1">
-            <Controller
-              name="minSalary"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <NumberInput
-                  label="Salary Range"
-                  placeholder="₹ 10"
-                  min={0}
-                  {...field}
-                  className="salary-range"
-                  withAsterisk
-                />
-              )}
+      {/* Row 3 - Salary Range + Deadline */}
+      <div className="col-span-2 flex gap-1">
+        <Controller
+          name="minSalary"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <NumberInput
+              label="Salary Range"
+              placeholder="₹ 100000"
+              min={0}
+              withAsterisk
+              error={errors.minSalary && "Minimum salary is required"}
+              {...field}
+              className="salary-range"
             />
+          )}
+        />
 
-            <Controller
-              name="maxSalary"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <NumberInput
-                  label=""
-                  placeholder="₹ 12,00,000"
-                  min={0}
-                  {...field}
-                  className="salary-range-max"
-                  withAsterisk
-                />
-              )}
+        <Controller
+          name="maxSalary"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <NumberInput
+              label=""
+              placeholder="₹ 12,00,000"
+              min={0}
+              withAsterisk
+              error={errors.maxSalary && "Maximum salary is required"}
+              {...field}
+              className="salary-range-max"
             />
+          )}
+        />
 
-{/* <Controller
-              name="applicationDeadline"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <DateInput
-                label="Application Deadline"
-                placeholder="Pick a date"
-                withAsterisk
-                value={field.value}
-                onChange={field.onChange}
-                className="application-deadline w-10 h-10"
-              />
-              
-              )}
-            /> */}
-<Controller
-  name="applicationDeadline"
-  control={control}
-  rules={{ required: true }}
-  render={({ field }) => {
-    const valueAsString =
-      field.value instanceof Date
-        ? field.value.toISOString().split("T")[0]
-        : field.value || "";
+        <Controller
+          name="applicationDeadline"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => {
+            const valueAsString =
+              field.value instanceof Date
+                ? field.value.toISOString().split("T")[0]
+                : field.value || "";
 
-    return (
-      <div className="application-deadline">
-        <label
-          htmlFor="applicationDeadline"
-          className="mb-1 text-sm font-medium text-dark-700"
-        >
-          Application Deadline <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="date"
-          id="applicationDeadline"
-          className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-          value={valueAsString}
-          onChange={(e) => field.onChange(new Date(e.target.value))}
+            return (
+              <div className="application-deadline w-full">
+                <label
+                  htmlFor="applicationDeadline"
+                  className="mb-1 text-sm font-medium text-dark-700"
+                >
+                  Application Deadline <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  id="applicationDeadline"
+                  className={`border rounded px-3 py-2 w-full focus:outline-none ${
+                    errors.applicationDeadline
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-blue-500"
+                  }`}
+                  value={valueAsString}
+                  onChange={(e) =>
+                    field.onChange(new Date(e.target.value))
+                  }
+                />
+                {errors.applicationDeadline && (
+                  <p className="text-red-500 text-sm mt-1">
+                    Deadline is required
+                  </p>
+                )}
+              </div>
+            );
+          }}
         />
       </div>
-    );
-  }}
-/>
-          </div>
 
-          {/* Job Description */}
-          <div className="col-span-2">
-            <Textarea
-              label="Job Description"
-              placeholder="Please share a description to let the candidate know more about the job role"
-              withAsterisk
-              minRows={5}
-              {...register("description", { required: true })}
-            />
-          </div>
-        </div>
+      {/* Job Description */}
+      <div className="col-span-2">
+        <Textarea
+          label="Job Description"
+          placeholder="Please share a description to let the candidate know more about the job role"
+          withAsterisk
+          minRows={5}
+          error={errors.description && "Description is required"}
+          {...register("description", { required: true })}
+        />
+      </div>
+    </div>
 
-        {/* Buttons */}
-        <div className="flex justify-between items-center mt-6">
-          <Button variant="outline">Save Draft</Button>
-          <Button type="submit" color="blue" rightSection="→">
-            Publish
-          </Button>
-        </div>
-      </form>
-    </Modal>
+    {/* Buttons */}
+    <div className="flex justify-between items-center mt-6">
+      <Button variant="outline">Save Draft</Button>
+      <Button type="submit" color="blue" rightSection="→">
+        Publish
+      </Button>
+    </div>
+  </form>
+</Modal>
 
     </div>
 
