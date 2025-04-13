@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./globals.css";
 import { MapPin, Briefcase, Wallet } from "lucide-react";
-
+import { companyLogoMap } from "../../companyLogos";
 import { IconX } from "@tabler/icons-react";
 
 type Job = {
@@ -266,8 +266,23 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
           <div className="flex justify-between items-center mb-2">
             {/* <Avatar radius="xl" size="md" src="/company-icon.png" /> */}
  <div className="bg-gray-200 p-1 rounded-lg inline-block">
+   <div className="bg-gray-200 p-1 rounded-lg inline-block">
+  <Avatar radius="xl" size="md">
+    <img
+      src={`/logo/${companyLogoMap[job.company.toLowerCase()] || "default.png"}`}
+      alt={`${job.company || "Default"} logo`}
+      onError={(e) => {
+        const target = e.target as HTMLImageElement;
+        target.onerror = null;
+        target.src = "/logo/default.png";
+      }}
+      className="w-full h-full object-cover"
+    />
+  </Avatar>
+</div>
 
-         <Avatar radius="xl" size="md">
+
+{/*          <Avatar radius="xl" size="md">
   <img
     src={
       job.company
@@ -282,7 +297,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
     }}
     className="w-full h-full object-cover"
   />
-</Avatar>
+</Avatar> */}
 </div>
 
  {/* <Avatar radius="xl" size="md">
