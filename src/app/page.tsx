@@ -266,22 +266,23 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
           <div className="flex justify-between items-center mb-2">
             {/* <Avatar radius="xl" size="md" src="/company-icon.png" /> */}
  <div className="bg-gray-200 p-1 rounded-lg inline-block">
-  <Avatar radius="xl" size="md">
-    <img
-      src={
-        job.company
-          ? `/logo/${job.company.toLowerCase().replace(/\s+/g, '-')}.png`
-          : '/logo/default.png'
-      }
-      alt={`${job.company || 'Default'} logo`}
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.onerror = null;
-        target.src = "/logo/default.png";
-      }}
-      className="w-full h-full object-cover"
-    />
-  </Avatar>
+
+         <Avatar radius="xl" size="md">
+  <img
+    src={
+      job.company
+        ? `/logo/${job.company.replace(/\s+/g, '-')}.png` // remove toLowerCase()
+        : '/logo/default.png'
+    }
+    alt={`${job.company || 'Default'} logo`}
+    onError={(e) => {
+      const target = e.target as HTMLImageElement;
+      target.onerror = null;
+      target.src = "/logo/default.png"; // fallback logo
+    }}
+    className="w-full h-full object-cover"
+  />
+</Avatar>
 </div>
 
  {/* <Avatar radius="xl" size="md">
