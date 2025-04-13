@@ -351,13 +351,31 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
       </Container>
 
       {/* Create Job Modal */}
-      <Modal
+{/*       <Modal
       opened={opened}
       onClose={() => setOpened(false)}
       title="Create Job Opening"
       size="lg"
       radius="md"
+    > */}
+        <Modal
+  opened={opened}
+  onClose={() => setOpened(false)}
+  size="lg"
+  radius="md"
+  withCloseButton={false} // remove default close button
+  title={null} // set title to null so we can handle it manually
+>
+   {/* Custom title */}
+   <div className="relative mb-4">
+    <h2 className="text-center text-xl font-semibold">Create Job Opening</h2>
+    <button
+      onClick={() => setOpened(false)}
+      className="absolute right-0 top-0 text-gray-500 hover:text-black"
     >
+      ✕
+    </button>
+  </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-2 gap-4">
           {/* Row 1 */}
