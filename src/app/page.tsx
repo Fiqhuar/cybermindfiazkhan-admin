@@ -215,10 +215,10 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
       className="flex-1 min-w-[150px]"
     />
       <div className="flex-1 min-w-[150px]">
-          <label className="block text-sm font-medium mb-3">
+          <label className="block text-sm font-medium mb-2">
             Salary Per Month
           </label>
-          <RangeSlider  className="mb-4"
+          <RangeSlider  className="mb-3"
             value={salaryRange}
             onChange={(value) =>
               setSalaryRange([...value] as [number, number])
