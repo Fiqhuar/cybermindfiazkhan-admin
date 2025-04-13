@@ -167,7 +167,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
   // });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
 <nav className="custom-navbar">
   <div className="custom-navbar-container">
     <img src="../cybermindlogo.png" alt="Logo" className="navbar-logo" />
