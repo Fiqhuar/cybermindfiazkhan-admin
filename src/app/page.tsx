@@ -418,9 +418,9 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
             render={({ field }) => (
               <Select
                 label="Job Type"
-                data={["FullTime", "PartTime", "Internship", "Contract"]}
+                data={["Full-Time", "Part-Time", "Internship", "Contract"]}
                 withAsterisk
-                placeholder="FullTime"
+                placeholder="Full-Time"
                 {...field}
               />
             )}
