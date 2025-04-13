@@ -265,7 +265,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
         <div>
           <div className="flex justify-between items-center mb-2">
             {/* <Avatar radius="xl" size="md" src="/company-icon.png" /> */}
- <div className="bg-gray-200 p-1 rounded-lg inline-block">
+
    <div className="bg-gray-200 p-1 rounded-lg inline-block">
   <Avatar radius="xl" size="md">
     <img
@@ -279,7 +279,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
       className="w-full h-full object-cover"
     />
   </Avatar>
-</div>
+
 
 
 {/*          <Avatar radius="xl" size="md">
