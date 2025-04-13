@@ -487,7 +487,7 @@ const [salaryRange, setSalaryRange] = useState<[number, number]>([0, 80]);
       <div className="application-deadline">
         <label
           htmlFor="applicationDeadline"
-          className="mb-1 text-sm font-medium text-gray-700"
+          className="mb-1 text-sm font-medium text-dark-700"
         >
           Application Deadline <span className="text-red-500">*</span>
         </label>
