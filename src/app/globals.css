@@ -28,7 +28,7 @@
 }
 
 body {
-  background: rgb(242, 243, 243);
+   background: rgb(242, 243, 243);
   /* color: var(--foreground); */
   color: var(--foreground);
   font-family: 'Chillax';
@@ -38,12 +38,13 @@ body {
   background-color: white;
   padding: 12px 24px;
   /* position: fixed; */
-  top: 0;
+  top: -20;
   z-index: 1000;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
   border-radius: 40px;
   max-width: fit-content;
   margin: 20px auto;
+  margin-top:50px ;
 }
 
 .custom-navbar-container {
